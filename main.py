@@ -6,7 +6,7 @@ import time
 
 
 def menu():
-    print("[0] - выход\n[1] - играть против компьютера\n[2] - игра на двоих")
+    print(\n"[0] - выход\n[1] - играть против компьютера\n[2] - игра на двоих")
     selection = input()
 
     return selection
