@@ -2,9 +2,10 @@
 # начало работы: 13.07.18
 #
 # ToDo:
-# -- исправить вывод победителя - сейчас это постоянно 0
+# -- реализовать игру на больше клеток (например, 4х4)
 #
 # ChangeLog:
+# -- исправил вывод победителя [07.08.2018]
 # -- изменил механизм хода пк (стал рандомно выбирать клетки) [06.08.2018]
 # -- залил законченный код на гит [14.08.2018]
 
@@ -21,20 +22,28 @@ def menu():
 def create_game_field():
     """ создаёт пустое и красивое поле """
     return ["   ", "   ", "   ",
-             "   ", "   ", "   ",
-             "   ", "   ", "   "]
+            "   ", "   ", "   ",
+            "   ", "   ", "   "]
 
 
 def show_game_field(field):
     """ показывает просто красивое поле """
-    showed_field = (
-    "{0}|{1}|{2}\n"
-    "---+---+---\n"
-    "{3}|{4}|{5}\n"
-    "---+---+---\n"
-    "{6}|{7}|{8}".format(field[0], field[1], field[2],
+    showed_field = ("""
+{0}|{1}|{2}
+---+---+---
+{3}|{4}|{5}
+---+---+---
+{6}|{7}|{8}    
+""".format(field[0], field[1], field[2],
                           field[3], field[4], field[5],
                           field[6], field[7], field[8]))
+# "{0}|{1}|{2}\n"
+# "---+---+---\n"
+# "{3}|{4}|{5}\n"
+# "---+---+---\n"
+# "{6}|{7}|{8}".format(field[0], field[1], field[2],
+#                           field[3], field[4], field[5],
+#                           field[6], field[7], field[8]))
 
     return showed_field
 
@@ -49,7 +58,7 @@ def who_first():
 
 def motion_on_field(field, cell_of_number, marker):
     """ даёт разрешение на ход и сама делает его """
-    if field[cell_of_number] == "   " and field[cell_of_number] != " X ":
+    if field[cell_of_number] == "   " and field[cell_of_number] != marker:#" X ":
         field[cell_of_number] = " {} ".format(marker)
         return True
     else:
@@ -89,9 +98,11 @@ def motion_player(field, marker):
                 if motion_on_field(cell_of_number=motion, field=field, marker=marker):
                     return marker
                 else:
-                    print("Это поле уже занято.")
+                    print("Это поле уже занято.\n")
+                    print(show_game_field(field))
             except (ValueError, IndexError):
-                print("Не верно. Поробуй ещё раз.")
+                print("Не верно. Поробуй ещё раз.\n")
+                print(show_game_field(field))
 
 
 def motion_pc(field, marker):
@@ -111,8 +122,16 @@ def motion_pc(field, marker):
 
         return marker
 
+
 if __name__ == "__main__":
-    print("Крестики Нолики")
+    print("""
+
+######~######~~####~~~~######~~####~~~####~~~~######~~####~~#####
+~~##~~~~~##~~~##~~##~~~~~##~~~##~~##~##~~##~~~~~##~~~##~~##~##~~~
+~~##~~~~~##~~~##~~~~~~~~~##~~~######~##~~~~~~~~~##~~~##~~##~####~
+~~##~~~~~##~~~##~~##~~~~~##~~~##~~##~##~~##~~~~~##~~~##~~##~##~~~
+~~##~~~######~~####~~~~~~##~~~##~~##~~####~~~~~~##~~~~####~~#####
+""")
     while True:
         selection = menu()
         field = create_game_field()
@@ -136,19 +155,22 @@ if __name__ == "__main__":
                     motion_pc(field, marker=pc_marker)
                     last_marker = pc_marker
                     print(show_game_field(field))
-                    motion_player(field, marker=player_marker)
-                    last_marker = player_marker
+                    if not check_winner(field=field):
+                        motion_player(field, marker=player_marker)
+                        last_marker = player_marker
                 else:
                     motion_player(field, player_marker)
                     last_marker = player_marker
                     print(show_game_field(field))
-                    motion_pc(field, pc_marker)
-                    last_marker = pc_marker
+                    if not check_winner(field=field):
+                        motion_pc(field, pc_marker)
+                        last_marker = pc_marker
+                    # last_marker = pc_marker
                 if not check_winner(field):
                     print(show_game_field(field))
 
             if check_winner(field) != "draw":
-                print("\nВыиграл: ", last_marker)
+                print("\nВыиграл:", last_marker)
             else:
                 print("\nНичья")
             break
